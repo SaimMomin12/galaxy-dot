@@ -100,7 +100,7 @@ InputPanel.prototype.updateUI= function() {
 InputPanel.prototype.readUrlParameters = function() {
 	var vars = {};
 	var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
-			vars[key] = value;
+			vars[key] = decodeURIComponent(value.replace(/\+/g, " "));
 	});
 
 	for (var key in vars) {
@@ -125,7 +125,7 @@ InputPanel.prototype.set = function(variable, inputType, value) {
 
 	if (typeof(this.spec[variable].callback) === "function") {
 		if (inputType === "url") {
-			var values = value.split(",");
+			var values = value.split(",").map(function(v){ return v.trim(); });
 			for (var i in values) {
 				if (startsWith("http://", values[i]) || startsWith("https://", values[i])) {
 					this.spec[variable].callback(values[i], inputType, variable);
